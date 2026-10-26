@@ -1,14 +1,23 @@
-// Viser månedens forbrug og top-kategorier, indeholder appens hovedknapper.
+// OversigtScreen.js — SCREEN 1.
+// Viser månedens forbrug + top-kategorier, og har appens hovedknapper.
+//
+// ÆNDRET I V2:
+// - Tæller nu kun udgifter fra indeværende måned (data gemmes over tid).
+// - Viser budgetstatus og har en ny knap til Budget-skærmen.
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';
 import { samletForbrug, forbrugPrKategori, kr } from '../lib/analyse';
+import { denneMaaned, budgetStatus } from '../lib/budget'; // NYT I V2
 import styles from '../styles/styles';
+import v2 from '../styles/v2Styles'; // NYT I V2
 
 export default function OversigtScreen({ navigation }) {
-  const { udgifter } = useUdgifter();
+  const { udgifter, budget } = useUdgifter();
 
-  const total = samletForbrug(udgifter);
-  const kategorier = forbrugPrKategori(udgifter).slice(0, 4);
+  const maanedens = denneMaaned(udgifter);
+  const total = samletForbrug(maanedens);
+  const kategorier = forbrugPrKategori(maanedens).slice(0, 4);
+  const b = budgetStatus(udgifter, budget);
 
   return (
     <ScrollView style={styles.skaerm}>
@@ -17,13 +26,29 @@ export default function OversigtScreen({ navigation }) {
         <Text style={styles.labelTekst}>Forbrug denne måned</Text>
         <Text style={styles.beloebStort}>{kr(total)} kr</Text>
         <Text style={styles.underskrift}>
-          fordelt på {udgifter.length} registrerede udgifter
+          fordelt på {maanedens.length} registrerede udgifter
         </Text>
+
+        {/* NYT I V2: budgetlinje — eller en opfordring til at sætte et */}
+        {b.harBudget ? (
+          <Text style={v2.budgetLinje}>
+            {b.rest >= 0
+              ? `${kr(b.rest)} kr tilbage af ${kr(b.budget)} kr · ca. ${kr(b.prDag)} kr/dag`
+              : `${kr(-b.rest)} kr over budgettet på ${kr(b.budget)} kr`}
+          </Text>
+        ) : (
+          <Text style={v2.budgetLink} onPress={() => navigation.navigate('Budget')}>
+            Sæt et månedsbudget →
+          </Text>
+        )}
       </View>
 
       {/* Top-kategorier med simple bjælker */}
       <View style={styles.kort}>
         <Text style={styles.overskrift}>Hvor pengene går hen</Text>
+        {kategorier.length === 0 ? (
+          <Text style={styles.underskrift}>Ingen udgifter endnu denne måned.</Text>
+        ) : null}
         {kategorier.map((k) => (
           <View key={k.kategori}>
             <View style={styles.kategoriRaekke}>
@@ -64,6 +89,16 @@ export default function OversigtScreen({ navigation }) {
       >
         <Text style={[styles.knapTekst, styles.knapTekstSekundaer]}>
           Se alle udgifter
+        </Text>
+      </Pressable>
+
+      {/* KNAP 4 — NYT I V2: navigerer til Budget */}
+      <Pressable
+        style={[styles.knap, styles.knapSekundaer]}
+        onPress={() => navigation.navigate('Budget')}
+      >
+        <Text style={[styles.knapTekst, styles.knapTekstSekundaer]}>
+          Mit budget
         </Text>
       </Pressable>
     </ScrollView>

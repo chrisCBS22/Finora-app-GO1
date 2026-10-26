@@ -1,22 +1,56 @@
-// Listen over udgifter.
+// UdgifterScreen.js — SCREEN 2: listen over udgifter.
+// Opfylder listekravet med FlatList, og har filterknapper pr. kategori.
+//
+// ÆNDRET I V2:
+// - Søgefunktion: søg i tekst og kategori, kombineret med kategorifilteret.
+// - Viser antal og sum for det, der er filtreret frem.
+// - Sletning spørger nu om bekræftelse.
 import { useState } from 'react';
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, Text, FlatList, Pressable, TextInput, Alert } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';
 import { kategorier as alleKategorier } from '../data/seed';
-import { kr } from '../lib/analyse';
+import { kr, samletForbrug } from '../lib/analyse';
 import styles from '../styles/styles';
+import v2 from '../styles/v2Styles'; // NYT I V2
 
 export default function UdgifterScreen() {
   const { udgifter, sletUdgift } = useUdgifter();
   const [filter, setFilter] = useState('Alle');
+  const [soegning, setSoegning] = useState(''); // NYT I V2
 
-  const synlige =
-    filter === 'Alle' ? udgifter : udgifter.filter((u) => u.kategori === filter);
+  // NYT I V2: søgning og filter virker sammen.
+  const soeg = soegning.trim().toLowerCase();
+  const synlige = udgifter
+    .filter((u) => filter === 'Alle' || u.kategori === filter)
+    .filter(
+      (u) =>
+        soeg === '' ||
+        u.tekst.toLowerCase().includes(soeg) ||
+        u.kategori.toLowerCase().includes(soeg)
+    );
 
   const filtre = ['Alle', ...alleKategorier];
 
+  // NYT I V2: bekræft før sletning
+  const bekraeftSlet = (item) => {
+    Alert.alert('Slet udgift?', `${item.tekst} · ${kr(item.beloeb)} kr`, [
+      { text: 'Annullér', style: 'cancel' },
+      { text: 'Slet', style: 'destructive', onPress: () => sletUdgift(item.id) },
+    ]);
+  };
+
   return (
     <View style={styles.skaerm}>
+      {/* NYT I V2: søgefelt */}
+      <TextInput
+        style={v2.soegefelt}
+        value={soegning}
+        onChangeText={setSoegning}
+        placeholder="Søg, fx Wolt eller café"
+        clearButtonMode="while-editing"
+        autoCorrect={false}
+      />
+
       {/* Filterknapper — hver er en knap med en funktion */}
       <View style={styles.filterRaekke}>
         {filtre.map((f) => {
@@ -35,14 +69,26 @@ export default function UdgifterScreen() {
         })}
       </View>
 
+      <Text style={v2.resultatLinje}>
+        {synlige.length} udgifter · {kr(samletForbrug(synlige))} kr
+      </Text>
+
       <FlatList
         data={synlige}
         keyExtractor={(item) => item.id}
+        keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
-          <Text style={styles.tomListe}>Ingen udgifter i denne kategori.</Text>
+          <Text style={styles.tomListe}>
+            {soeg ? `Ingen udgifter matcher "${soegning}".` : 'Ingen udgifter i denne kategori.'}
+          </Text>
+        }
+        ListFooterComponent={
+          synlige.length > 0 ? (
+            <Text style={v2.hjaelpetekst}>Hold fingeren på en udgift for at slette den</Text>
+          ) : null
         }
         renderItem={({ item }) => (
-          <Pressable style={styles.listeRaekke} onLongPress={() => sletUdgift(item.id)}>
+          <Pressable style={styles.listeRaekke} onLongPress={() => bekraeftSlet(item)}>
             <View>
               <Text style={styles.listeTitel}>{item.tekst}</Text>
               <Text style={styles.listeUndertekst}>

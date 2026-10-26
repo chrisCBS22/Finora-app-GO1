@@ -1,3 +1,8 @@
+// App.js — appens indgangspunkt.
+// Her sættes navigationen op (React Navigation, stack) og hele appen pakkes
+// ind i UdgiftProvider, så alle screens deler den samme liste af udgifter.
+//
+// ÆNDRET I V2: ny screen "Budget" (import + én Stack.Screen).
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -6,6 +11,7 @@ import OversigtScreen from './screens/OversigtScreen';
 import UdgifterScreen from './screens/UdgifterScreen';
 import TilfoejScreen from './screens/TilfoejScreen';
 import IndsigtScreen from './screens/IndsigtScreen';
+import BudgetScreen from './screens/BudgetScreen'; // NYT I V2
 import { colors } from './styles/theme';
 
 const Stack = createNativeStackNavigator();
@@ -42,6 +48,12 @@ export default function App() {
             name="Indsigt"
             component={IndsigtScreen}
             options={{ title: 'AI-indsigt' }}
+          />
+          {/* NYT I V2 */}
+          <Stack.Screen
+            name="Budget"
+            component={BudgetScreen}
+            options={{ title: 'Mit budget' }}
           />
         </Stack.Navigator>
       </NavigationContainer>
