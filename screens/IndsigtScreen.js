@@ -1,11 +1,5 @@
 // IndsigtScreen.js — SCREEN 4: appens kerneværdi, rådene.
-//
-// ÆNDRET I V2:
-// - Ny knap "Spørg AI": sender en opsummering til en sprogmodel (lib/ai.js)
-//   og viser de råd, den skriver. Uden API-nøgle bruges de beregnede råd.
-// - Et budgetråd vises øverst, hvis brugeren har sat et budget.
-// - Det vises tydeligt, om rådene er AI-genererede eller beregnet lokalt,
-//   og teksten om data tilpasser sig, så den altid er sand.
+
 import { useState } from 'react';
 import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';
@@ -19,7 +13,7 @@ export default function IndsigtScreen({ navigation }) {
   const { udgifter, budget } = useUdgifter();
   const maanedens = denneMaaned(udgifter);
 
-  // NYT I V2: AI-svaret gemmes i state. null = vis de beregnede råd.
+  // AI-svaret gemmes i state. null = vis de beregnede råd.
   const [aiResultat, setAiResultat] = useState(null);
   const [henter, setHenter] = useState(false);
 
@@ -32,7 +26,7 @@ export default function IndsigtScreen({ navigation }) {
   const visAi = aiResultat && aiResultat.kilde === 'ai';
   const raad = visAi ? aiResultat.raad : lokaleRaad;
 
-  // KNAP — NYT I V2: spørg sprogmodellen
+  // KNAP — spørg sprogmodellen
   const spoergAi = async () => {
     setHenter(true);
     const resultat = await hentAiRaad(maanedens, budget);
@@ -47,12 +41,12 @@ export default function IndsigtScreen({ navigation }) {
         Baseret på dine {maanedens.length} udgifter denne måned
       </Text>
 
-      {/* NYT I V2: hvor kommer rådene fra? */}
+      {/*hvor kommer rådene fra? */}
       <Text style={[v2.kildeLabel, visAi && v2.kildeLabelAi]}>
         {visAi ? 'Skrevet af AI' : 'Beregnet på telefonen'}
       </Text>
 
-      {/* NYT I V2: vis hvorfor AI ikke blev brugt, hvis brugeren bad om det */}
+      {/* vis hvorfor AI ikke blev brugt, hvis brugeren bad om det */}
       {aiResultat && aiResultat.fejl ? (
         <View style={v2.fejlBoks}>
           <Text style={v2.fejlBoksTekst}>{aiResultat.fejl} Viser de beregnede råd i stedet.</Text>
@@ -69,7 +63,7 @@ export default function IndsigtScreen({ navigation }) {
         </View>
       ))}
 
-      {/* KNAP — NYT I V2 */}
+  
       <Pressable
         style={[styles.knap, henter && v2.knapDeaktiveret]}
         onPress={spoergAi}

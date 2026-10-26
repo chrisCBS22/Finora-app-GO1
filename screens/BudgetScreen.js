@@ -1,6 +1,5 @@
 // BudgetScreen.js — NY SCREEN I V2.
-// Brugeren sætter et månedsbudget, som gemmes på telefonen. Skærmen viser,
-// hvor meget der er brugt, hvad der er tilbage, og hvad man kan bruge pr. dag.
+
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, Alert, Keyboard } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';

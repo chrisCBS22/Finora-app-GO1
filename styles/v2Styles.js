@@ -1,6 +1,3 @@
-// v2Styles.js — NYT I V2.
-// Styling til de nye dele af appen. Ligger i sin egen fil, så styles.js fra
-// v1 ikke skal ændres. Bruger de samme farver og afstande fra theme.js.
 import { StyleSheet } from 'react-native';
 import { colors, spacing, radius, font } from './theme';
 

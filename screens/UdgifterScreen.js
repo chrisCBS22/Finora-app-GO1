@@ -1,10 +1,3 @@
-// UdgifterScreen.js — SCREEN 2: listen over udgifter.
-// Opfylder listekravet med FlatList, og har filterknapper pr. kategori.
-//
-// ÆNDRET I V2:
-// - Søgefunktion: søg i tekst og kategori, kombineret med kategorifilteret.
-// - Viser antal og sum for det, der er filtreret frem.
-// - Sletning spørger nu om bekræftelse.
 import { useState } from 'react';
 import { View, Text, FlatList, Pressable, TextInput, Alert } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';
@@ -18,7 +11,7 @@ export default function UdgifterScreen() {
   const [filter, setFilter] = useState('Alle');
   const [soegning, setSoegning] = useState(''); // NYT I V2
 
-  // NYT I V2: søgning og filter virker sammen.
+  // søgning og filter virker sammen.
   const soeg = soegning.trim().toLowerCase();
   const synlige = udgifter
     .filter((u) => filter === 'Alle' || u.kategori === filter)
@@ -31,7 +24,7 @@ export default function UdgifterScreen() {
 
   const filtre = ['Alle', ...alleKategorier];
 
-  // NYT I V2: bekræft før sletning
+  // bekræft før sletning
   const bekraeftSlet = (item) => {
     Alert.alert('Slet udgift?', `${item.tekst} · ${kr(item.beloeb)} kr`, [
       { text: 'Annullér', style: 'cancel' },
@@ -41,7 +34,7 @@ export default function UdgifterScreen() {
 
   return (
     <View style={styles.skaerm}>
-      {/* NYT I V2: søgefelt */}
+      {}
       <TextInput
         style={v2.soegefelt}
         value={soegning}

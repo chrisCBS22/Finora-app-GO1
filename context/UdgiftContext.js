@@ -1,10 +1,5 @@
 // UdgiftContext.js — én fælles liste af udgifter, som alle screens kan læse og skrive til.
-//
-// ÆNDRET I V2: data gemmes nu på telefonen med AsyncStorage (via lib/lager.js).
-// - Ved første opstart bruges startdata fra seed.js.
-// - Derefter læses udgifter og budget fra lageret, og hver ændring gemmes.
-// Funktionerne fra v1 (udgifter, tilfoejUdgift, sletUdgift) virker som før,
-// så de gamle screens ikke skal ændres.
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import seed from '../data/seed';
@@ -63,10 +58,10 @@ export function UdgiftProvider({ children }) {
     setUdgifter((gamle) => gamle.filter((u) => u.id !== id));
   };
 
-  // NYT I V2
+
   const gemBudget = (beloeb) => setBudget(beloeb);
 
-  // NYT I V2: sletter alt gemt og starter forfra med startdata.
+  //sletter alt gemt og starter forfra med startdata.
   const nulstilData = async () => {
     await sletAlt();
     setUdgifter(startdataDenneMaaned());

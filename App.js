@@ -1,8 +1,5 @@
 // App.js — appens indgangspunkt.
-// Her sættes navigationen op (React Navigation, stack) og hele appen pakkes
-// ind i UdgiftProvider, så alle screens deler den samme liste af udgifter.
-//
-// ÆNDRET I V2: ny screen "Budget" (import + én Stack.Screen).
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 

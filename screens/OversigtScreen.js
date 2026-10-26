@@ -1,9 +1,4 @@
 // OversigtScreen.js — SCREEN 1.
-// Viser månedens forbrug + top-kategorier, og har appens hovedknapper.
-//
-// ÆNDRET I V2:
-// - Tæller nu kun udgifter fra indeværende måned (data gemmes over tid).
-// - Viser budgetstatus og har en ny knap til Budget-skærmen.
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useUdgifter } from '../context/UdgiftContext';
 import { samletForbrug, forbrugPrKategori, kr } from '../lib/analyse';
@@ -29,7 +24,7 @@ export default function OversigtScreen({ navigation }) {
           fordelt på {maanedens.length} registrerede udgifter
         </Text>
 
-        {/* NYT I V2: budgetlinje — eller en opfordring til at sætte et */}
+ 
         {b.harBudget ? (
           <Text style={v2.budgetLinje}>
             {b.rest >= 0
@@ -92,7 +87,7 @@ export default function OversigtScreen({ navigation }) {
         </Text>
       </Pressable>
 
-      {/* KNAP 4 — NYT I V2: navigerer til Budget */}
+      {/* KNAP 4 — navigerer til Budget */}
       <Pressable
         style={[styles.knap, styles.knapSekundaer]}
         onPress={() => navigation.navigate('Budget')}
